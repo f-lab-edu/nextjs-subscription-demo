@@ -5,9 +5,10 @@ import { Button } from '../ui/Button';
 
 interface PlanSelectionProps {
   selectedPlan?: Plan;
+  setStep: () => void;
 }
 
-export default function PlanSelection({ selectedPlan }: PlanSelectionProps) {
+export default function PlanSelection({ selectedPlan, setStep }: PlanSelectionProps) {
   return (
     <div className='space-y-6'>
       <div className='text-center'>
@@ -15,7 +16,7 @@ export default function PlanSelection({ selectedPlan }: PlanSelectionProps) {
         <p className='text-muted-foreground mb-2'>{'필요에 맞는 플랜을 선택하세요. 언제든지 변경할 수 있습니다.'}</p>
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6'>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6' onClick={setStep}>
         {plans.map((plan) => (
           <Card
             key={plan.id}

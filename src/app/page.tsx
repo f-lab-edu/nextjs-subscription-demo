@@ -1,4 +1,17 @@
+'use client';
+
+import { Completion } from '@/components/subscription/Completion';
+import Payment from '@/components/subscription/Payment';
+import PlanSelection from '@/components/subscription/PlanSelection';
+import { Summary } from '@/components/subscription/Summary';
+import UserInfo from '@/components/subscription/UserInfo';
+import { useFunnel } from '@/hooks/useFunnel';
+
 export default function Home() {
+  const [Funnel, setStep] = useFunnel<'PlanSelection' | 'UserInfo' | 'Payment' | 'Summary' | 'Completion'>(
+    'PlanSelection',
+  );
+
   return (
     <div className='min-h-screen bg-background'>
       <div className='container mx-auto px-4 py-8'>
@@ -10,7 +23,25 @@ export default function Home() {
             </p>
           </div>
 
-          <div className='mt-8'>{/* 컴포넌트 위치 */}</div>
+          <div className='mt-8'>
+            <Funnel>
+              <Funnel.Step name='PlanSelection'>
+                <PlanSelection setStep={() => setStep('UserInfo')} />
+              </Funnel.Step>
+              <Funnel.Step name='UserInfo'>
+                <UserInfo setStep={() => setStep('Payment')} />
+              </Funnel.Step>
+              <Funnel.Step name='Payment'>
+                <Payment setStep={() => setStep('Summary')} />
+              </Funnel.Step>
+              <Funnel.Step name='Summary'>
+                <Summary setStep={() => setStep('Completion')} />
+              </Funnel.Step>
+              <Funnel.Step name='Completion'>
+                <Completion setStep={() => setStep('PlanSelection')} />
+              </Funnel.Step>
+            </Funnel>
+          </div>
         </div>
       </div>
     </div>

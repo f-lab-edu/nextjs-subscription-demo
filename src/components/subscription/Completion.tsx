@@ -4,7 +4,11 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle, ArrowRight } from 'lucide-react';
 
-export function Completion() {
+interface CompletionProps {
+  setStep: () => void;
+}
+
+export function Completion({ setStep }: CompletionProps) {
   // 임시 구독 데이터
   const mockSubscriptionData = {
     plan: {
@@ -32,7 +36,7 @@ export function Completion() {
 
   const handleGoToDashboard = () => {
     // TODO: 대시보드로 라우팅
-    // router.push('/dashboard');
+    setStep();
   };
 
   const handleViewHelp = () => {
