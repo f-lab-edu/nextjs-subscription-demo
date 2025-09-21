@@ -6,13 +6,11 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { userData } from '@/data/user-data';
+import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 
-interface UserInfoProps {
-  onNext?: () => void;
-  setStep: () => void;
-}
+export default function UserInfo() {
+  const { goToStep } = useSubscriptionParams();
 
-export default function UserInfo({ onNext, setStep }: UserInfoProps) {
   const originalUserInfo = {
     name: userData?.name,
     email: userData?.email,
@@ -68,12 +66,12 @@ export default function UserInfo({ onNext, setStep }: UserInfoProps) {
     if (hasChanges) {
       setIsSaving(true);
       try {
-        onNext?.();
+        goToStep('Payment');
       } finally {
         setIsSaving(false);
       }
     } else {
-      setStep();
+      goToStep('Payment');
     }
   };
 

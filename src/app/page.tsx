@@ -6,11 +6,12 @@ import PlanSelection from '@/components/subscription/PlanSelection';
 import { Summary } from '@/components/subscription/Summary';
 import UserInfo from '@/components/subscription/UserInfo';
 import { useFunnel } from '@/hooks/useFunnel';
+import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 
 export default function Home() {
-  const [Funnel, setStep] = useFunnel<'PlanSelection' | 'UserInfo' | 'Payment' | 'Summary' | 'Completion'>(
-    'PlanSelection',
-  );
+  const { step } = useSubscriptionParams();
+
+  const Funnel = useFunnel(step);
 
   return (
     <div className='min-h-screen bg-background'>
@@ -26,19 +27,19 @@ export default function Home() {
           <div className='mt-8'>
             <Funnel>
               <Funnel.Step name='PlanSelection'>
-                <PlanSelection setStep={() => setStep('UserInfo')} />
+                <PlanSelection />
               </Funnel.Step>
               <Funnel.Step name='UserInfo'>
-                <UserInfo setStep={() => setStep('Payment')} />
+                <UserInfo />
               </Funnel.Step>
               <Funnel.Step name='Payment'>
-                <Payment setStep={() => setStep('Summary')} />
+                <Payment />
               </Funnel.Step>
               <Funnel.Step name='Summary'>
-                <Summary setStep={() => setStep('Completion')} />
+                <Summary />
               </Funnel.Step>
               <Funnel.Step name='Completion'>
-                <Completion setStep={() => setStep('PlanSelection')} />
+                <Completion />
               </Funnel.Step>
             </Funnel>
           </div>

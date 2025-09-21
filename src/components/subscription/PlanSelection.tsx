@@ -2,13 +2,15 @@ import { Plan, plans } from '@/data/card-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
+import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 
 interface PlanSelectionProps {
   selectedPlan?: Plan;
-  setStep: () => void;
 }
 
-export default function PlanSelection({ selectedPlan, setStep }: PlanSelectionProps) {
+export default function PlanSelection({ selectedPlan }: PlanSelectionProps) {
+  const { goToStep } = useSubscriptionParams();
+
   return (
     <div className='space-y-6'>
       <div className='text-center'>
@@ -16,9 +18,10 @@ export default function PlanSelection({ selectedPlan, setStep }: PlanSelectionPr
         <p className='text-muted-foreground mb-2'>{'필요에 맞는 플랜을 선택하세요. 언제든지 변경할 수 있습니다.'}</p>
       </div>
 
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6' onClick={setStep}>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6'>
         {plans.map((plan) => (
           <Card
+            onClick={() => goToStep('UserInfo', { planid: plan.id })}
             key={plan.id}
             className={`relative cursor-pointer transition-all duration-200 hover:scale-[1.02] flex flex-col h-full ${
               selectedPlan?.id === plan.id ? 'ring-2 ring-primary bg-card shadow-lg' : 'hover:shadow-lg bg-card'
