@@ -7,10 +7,10 @@ import { Badge } from '@/components/ui/Badge';
 import { User, CreditCard, Tag, Package } from 'lucide-react';
 
 interface SummaryProps {
-  onNext?: () => void;
+  setStep: () => void;
 }
 
-export function Summary({ onNext }: SummaryProps) {
+export function Summary({ setStep }: SummaryProps) {
   const [isProcessing, setIsProcessing] = useState(false);
 
   // 임시 구독 데이터
@@ -55,7 +55,7 @@ export function Summary({ onNext }: SummaryProps) {
     setTimeout(() => {
       setIsProcessing(false);
       console.log('결제 완료!');
-      onNext?.();
+      setStep();
     }, 1000);
   };
 

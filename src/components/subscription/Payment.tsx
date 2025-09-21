@@ -31,10 +31,10 @@ const mockPlan = {
 };
 
 interface PaymentProps {
-  onNext?: () => void;
+  setStep: () => void;
 }
 
-export default function Payment({ onNext }: PaymentProps) {
+export default function Payment({ setStep }: PaymentProps) {
   const [selectedCard, setSelectedCard] = useState('card1');
   const [selectedCoupon, setSelectedCoupon] = useState('');
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
@@ -81,7 +81,7 @@ export default function Payment({ onNext }: PaymentProps) {
     console.log('결제 정보:', paymentData);
 
     // TODO: API 호출하여 결제 처리
-    onNext?.();
+    setStep();
   };
 
   return (

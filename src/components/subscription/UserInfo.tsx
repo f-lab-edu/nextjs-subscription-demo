@@ -9,9 +9,10 @@ import { userData } from '@/data/user-data';
 
 interface UserInfoProps {
   onNext?: () => void;
+  setStep: () => void;
 }
 
-export default function UserInfo({ onNext }: UserInfoProps) {
+export default function UserInfo({ onNext, setStep }: UserInfoProps) {
   const originalUserInfo = {
     name: userData?.name,
     email: userData?.email,
@@ -72,7 +73,7 @@ export default function UserInfo({ onNext }: UserInfoProps) {
         setIsSaving(false);
       }
     } else {
-      onNext?.();
+      setStep();
     }
   };
 
