@@ -3,13 +3,11 @@
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle, ArrowRight } from 'lucide-react';
+import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 
-interface CompletionProps {
-  setStep: () => void;
-}
+export function Completion() {
+  const { goToStep } = useSubscriptionParams();
 
-export function Completion({ setStep }: CompletionProps) {
-  // 임시 구독 데이터
   const mockSubscriptionData = {
     plan: {
       id: 'pro',
@@ -33,17 +31,6 @@ export function Completion({ setStep }: CompletionProps) {
   };
 
   const { plan, user } = mockSubscriptionData;
-
-  const handleGoToDashboard = () => {
-    // TODO: 대시보드로 라우팅
-    setStep();
-  };
-
-  const handleViewHelp = () => {
-    console.log('도움말 보기');
-    // TODO: 도움말 페이지로 이동
-    // window.open('/help', '_blank');
-  };
 
   return (
     <div className='max-w-2xl mx-auto px-4 text-center'>
@@ -87,11 +74,11 @@ export function Completion({ setStep }: CompletionProps) {
         </div>
 
         <div className='flex flex-col sm:flex-row gap-3'>
-          <Button className='flex-1' size='lg' onClick={handleGoToDashboard}>
+          <Button className='flex-1' size='lg' onClick={() => goToStep('PlanSelection')}>
             대시보드로 이동
             <ArrowRight className='w-4 h-4 ml-2' />
           </Button>
-          <Button variant='outline' className='flex-1 bg-transparent' size='lg' onClick={handleViewHelp}>
+          <Button variant='outline' className='flex-1 bg-transparent' size='lg'>
             도움말 보기
           </Button>
         </div>
