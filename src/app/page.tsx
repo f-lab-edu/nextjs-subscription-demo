@@ -3,6 +3,7 @@
 import { Completion } from '@/components/subscription/Completion';
 import Payment from '@/components/subscription/Payment';
 import PlanSelection from '@/components/subscription/PlanSelection';
+import { ProgressIndicator } from '@/components/subscription/ProgressIndicator';
 import { Summary } from '@/components/subscription/Summary';
 import UserInfo from '@/components/subscription/UserInfo';
 import { useFunnel } from '@/hooks/useFunnel';
@@ -23,6 +24,8 @@ export default function Home() {
               {'간편하게 시작하세요. 언제든지 업그레이드하거나 취소할 수 있습니다.'}
             </p>
           </div>
+
+          <ProgressIndicator />
 
           <div className='mt-8'>
             <Funnel>
