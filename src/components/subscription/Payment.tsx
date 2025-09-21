@@ -9,6 +9,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/RadioGroup';
 import { Badge } from '@/components/ui/Badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/Dialog';
 import { CreditCard, Plus, Tag, X } from 'lucide-react';
+import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
+import { plans } from '@/data/card-data';
 
 // 임시 데이터
 const existingCards = [
@@ -22,21 +24,9 @@ const availableCoupons = [
   { id: 'FRIEND15', name: '친구 추천 15% 할인', discount: 15 },
 ];
 
-// 임시 플랜 데이터
-const mockPlan = {
-  id: 'pro',
-  name: '프로 플랜',
-  price: 50000,
-  description: '전문가를 위한 고급 기능',
-};
+export default function Payment() {
+  const { planid, cardid, couponid, goToStep, updateParam } = useSubscriptionParams();
 
-interface PaymentProps {
-  setStep: () => void;
-}
-
-export default function Payment({ setStep }: PaymentProps) {
-  const [selectedCard, setSelectedCard] = useState('card1');
-  const [selectedCoupon, setSelectedCoupon] = useState('');
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
   const [cards, setCards] = useState(existingCards);
   const [newCard, setNewCard] = useState({
@@ -46,9 +36,13 @@ export default function Payment({ setStep }: PaymentProps) {
     name: '',
   });
 
-  const selectedCouponData = availableCoupons.find((c) => c.id === selectedCoupon);
+  const selectedPlan = plans.find((plan) => plan.id === planid);
+  const selectedCardId = cardid || 'card1';
+  const selectedCouponId = couponid || '';
+  const selectedCouponData = availableCoupons.find((c) => c.id === selectedCouponId);
+
   const discount = selectedCouponData?.discount || 0;
-  const originalPrice = mockPlan.price;
+  const originalPrice = selectedPlan?.price || 0;
   const discountAmount = Math.floor((originalPrice * discount) / 100);
   const finalPrice = originalPrice - discountAmount;
 
@@ -63,25 +57,8 @@ export default function Payment({ setStep }: PaymentProps) {
     setCards((prev) => [...prev, newCardData]);
     setNewCard({ number: '', expiry: '', cvv: '', name: '' });
     setIsCardModalOpen(false);
-    setSelectedCard(newCardData.id);
 
-    console.log('새 카드 추가됨:', newCardData);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const paymentData = {
-      selectedCard: selectedCard,
-      coupon: selectedCoupon,
-      discount: discount,
-      finalPrice: finalPrice,
-    };
-
-    console.log('결제 정보:', paymentData);
-
-    // TODO: API 호출하여 결제 처리
-    setStep();
+    updateParam('cardid', newCardData.id);
   };
 
   return (
@@ -91,7 +68,7 @@ export default function Payment({ setStep }: PaymentProps) {
         <p className='text-muted-foreground'>결제 방법을 선택하고 쿠폰을 적용하세요.</p>
       </div>
 
-      <form onSubmit={handleSubmit} className='space-y-6'>
+      <div className='space-y-6'>
         {/* 결제 방법 선택 */}
         <Card className='bg-card border-2'>
           <CardHeader>
@@ -101,7 +78,7 @@ export default function Payment({ setStep }: PaymentProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-4'>
-            <RadioGroup value={selectedCard} onValueChange={setSelectedCard}>
+            <RadioGroup value={selectedCardId} onValueChange={(value) => updateParam('cardid', value)}>
               {cards.map((card) => (
                 <div
                   key={card.id}
@@ -210,7 +187,7 @@ export default function Payment({ setStep }: PaymentProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-4'>
-            <RadioGroup value={selectedCoupon} onValueChange={setSelectedCoupon}>
+            <RadioGroup value={selectedCouponId} onValueChange={(value) => updateParam('couponid', value)}>
               <div className='flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors'>
                 <RadioGroupItem value='' id='no-coupon' />
                 <Label htmlFor='no-coupon' className='cursor-pointer text-card-foreground flex-grow'>
@@ -253,7 +230,7 @@ export default function Payment({ setStep }: PaymentProps) {
                     type='button'
                     variant='ghost'
                     size='sm'
-                    onClick={() => setSelectedCoupon('')}
+                    onClick={() => updateParam('couponid', '')}
                     className='text-primary hover:text-primary/80'
                   >
                     <X className='w-4 h-4' />
@@ -269,7 +246,7 @@ export default function Payment({ setStep }: PaymentProps) {
           <CardContent className='pt-6'>
             <div className='space-y-3'>
               <div className='flex justify-between items-center text-card-foreground'>
-                <span className='font-medium'>{mockPlan.name}</span>
+                <span className='font-medium'>{selectedPlan?.name}</span>
                 <span className='font-medium'>₩{originalPrice.toLocaleString()}</span>
               </div>
               {discount > 0 && (
@@ -288,10 +265,10 @@ export default function Payment({ setStep }: PaymentProps) {
           </CardContent>
         </Card>
 
-        <Button type='submit' className='w-full' size='lg'>
+        <Button type='submit' className='w-full' size='lg' onClick={() => goToStep('Summary')}>
           다음 단계
         </Button>
-      </form>
+      </div>
     </div>
   );
 }
