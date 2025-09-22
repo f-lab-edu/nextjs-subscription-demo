@@ -5,7 +5,7 @@ export const paymentMethodsService = {
   getCards: () => apiRequest<Card[]>('/payment-methods'),
 
   createCard: (cardData: CreateCardRequest) =>
-    apiRequest<Card>('/cards', {
+    apiRequest<Card>('/payment-methods', {
       method: 'POST',
       body: JSON.stringify(cardData),
     }),
