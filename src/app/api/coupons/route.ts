@@ -11,18 +11,12 @@ export async function GET() {
       .from('user_coupons')
       .select(
         `
-    *,
-    coupons(
-      code,
-      name,
-      discount_type,
-      discount_value,
-      min_order_amount,
-      expires_at
-    )
-  `,
+        *,
+        coupons(*)
+      `,
       )
       .eq('user_id', userId);
+
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
