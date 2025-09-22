@@ -1,11 +1,11 @@
-import { cardService } from '@/service/paymentMethods';
+import { paymentMethodsService } from '@/service/paymentMethodsService';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useAddPaymentMethods() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: cardService.createCard,
+    mutationFn: paymentMethodsService.createCard,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/payment-methods'] });
     },
