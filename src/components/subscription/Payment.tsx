@@ -10,25 +10,21 @@ import { Badge } from '@/components/ui/Badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/Dialog';
 import { CreditCard, Plus, Tag, X } from 'lucide-react';
 import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
-import { plans } from '@/data/card-data';
-
-// 임시 데이터
-const existingCards = [
-  { id: 'card1', last4: '1234', brand: 'Visa', expiry: '12/25' },
-  { id: 'card2', last4: '5678', brand: 'MasterCard', expiry: '08/26' },
-];
-
-const availableCoupons = [
-  { id: 'WELCOME20', name: '신규 가입 20% 할인', discount: 20 },
-  { id: 'STUDENT10', name: '학생 할인 10%', discount: 10 },
-  { id: 'FRIEND15', name: '친구 추천 15% 할인', discount: 15 },
-];
+import { usePaymentMethods } from '@/hooks/api/usePaymentMethods';
+import { useCoupons } from '@/hooks/api/useCoupons';
+import { useAddPaymentMethods } from '@/hooks/api/useAddPaymentMethods';
+import { usePaymentCalculation } from '@/hooks/usePaymentCalculation';
 
 export default function Payment() {
-  const { planid, cardid, couponid, goToStep, updateParam } = useSubscriptionParams();
+  const { goToStep, updateParam } = useSubscriptionParams();
+
+  const { data: cards, isLoading: cardsLoading } = usePaymentMethods();
+  const { data: coupons = [], isLoading: couponsLoading } = useCoupons();
+  const addPaymentMethodMutation = useAddPaymentMethods();
+
+  const payment = usePaymentCalculation();
 
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
-  const [cards, setCards] = useState(existingCards);
   const [newCard, setNewCard] = useState({
     number: '',
     expiry: '',
@@ -36,29 +32,37 @@ export default function Payment() {
     name: '',
   });
 
-  const selectedPlan = plans.find((plan) => plan.id === planid);
-  const selectedCardId = cardid || 'card1';
-  const selectedCouponId = couponid || '';
-  const selectedCouponData = availableCoupons.find((c) => c.id === selectedCouponId);
+  if (cardsLoading || couponsLoading) {
+    return (
+      <div className='max-w-2xl mx-auto px-4 text-center'>
+        <div className='text-lg font-medium'>결제 정보를 불러오는 중...</div>
+      </div>
+    );
+  }
 
-  const discount = selectedCouponData?.discount || 0;
-  const originalPrice = selectedPlan?.price || 0;
-  const discountAmount = Math.floor((originalPrice * discount) / 100);
-  const finalPrice = originalPrice - discountAmount;
+  if (cards === undefined) {
+    return <div>카드가 없습니다</div>;
+  }
 
-  const handleAddNewCard = () => {
-    const newCardData = {
-      id: `card${Date.now()}`,
-      last4: newCard.number.slice(-4),
-      brand: 'New Card',
-      expiry: newCard.expiry,
-    };
+  const handleAddNewCard = async () => {
+    try {
+      const result = await addPaymentMethodMutation.mutateAsync({
+        cardNumber: newCard.number,
+        cardOwner: newCard.name,
+        expiry: newCard.expiry,
+        brand: 'New Card',
+        isDefault: false,
+      });
 
-    setCards((prev) => [...prev, newCardData]);
-    setNewCard({ number: '', expiry: '', cvv: '', name: '' });
-    setIsCardModalOpen(false);
+      setNewCard({ number: '', expiry: '', cvv: '', name: '' });
+      setIsCardModalOpen(false);
 
-    updateParam('cardid', newCardData.id);
+      if (result.data) {
+        updateParam('cardid', result.data.id);
+      }
+    } catch (error) {
+      console.error('카드 추가 실패:', error);
+    }
   };
 
   return (
@@ -78,7 +82,7 @@ export default function Payment() {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-4'>
-            <RadioGroup value={selectedCardId} onValueChange={(value) => updateParam('cardid', value)}>
+            <RadioGroup value={payment.selectedCardId} onValueChange={(value) => updateParam('cardid', value)}>
               {cards.map((card) => (
                 <div
                   key={card.id}
@@ -168,8 +172,13 @@ export default function Payment() {
                     >
                       취소
                     </Button>
-                    <Button type='button' onClick={handleAddNewCard} className='flex-1'>
-                      등록
+                    <Button
+                      type='button'
+                      onClick={handleAddNewCard}
+                      className='flex-1'
+                      disabled={addPaymentMethodMutation.isPending}
+                    >
+                      {addPaymentMethodMutation.isPending ? '등록 중...' : '등록'}
                     </Button>
                   </div>
                 </div>
@@ -187,44 +196,47 @@ export default function Payment() {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-4'>
-            <RadioGroup value={selectedCouponId} onValueChange={(value) => updateParam('couponid', value)}>
+            <RadioGroup
+              value={payment.selectedCoupon?.coupon_id || ''}
+              onValueChange={(value) => updateParam('couponid', value)}
+            >
               <div className='flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors'>
                 <RadioGroupItem value='' id='no-coupon' />
                 <Label htmlFor='no-coupon' className='cursor-pointer text-card-foreground flex-grow'>
                   쿠폰 사용 안함
                 </Label>
               </div>
-              {availableCoupons.map((coupon) => (
+              {coupons.map((coupon) => (
                 <div
                   key={coupon.id}
                   className='flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors'
                 >
-                  <RadioGroupItem value={coupon.id} id={coupon.id} />
+                  <RadioGroupItem value={coupon.coupon_id} id={coupon.coupon_id} />
                   <Label
-                    htmlFor={coupon.id}
+                    htmlFor={coupon.coupon_id}
                     className='flex items-center gap-3 cursor-pointer text-card-foreground flex-grow'
                   >
                     <Badge variant='secondary' className='bg-primary/10 text-primary border-primary/20'>
-                      {coupon.discount}% 할인
+                      {coupon.coupons?.discount || 0}% 할인
                     </Badge>
                     <div>
-                      <div className='font-medium'>{coupon.name}</div>
+                      <div className='font-medium'>{coupon.coupons?.name}</div>
                       <div className='text-sm text-muted-foreground'>
-                        ₩{Math.floor((originalPrice * coupon.discount) / 100).toLocaleString()} 절약
+                        ₩{Math.floor((payment.originalPrice * (coupon.coupons?.discount || 0)) / 100).toLocaleString()}
+                        절약
                       </div>
                     </div>
                   </Label>
                 </div>
               ))}
             </RadioGroup>
-
             {/* 선택된 쿠폰 표시 */}
-            {selectedCouponData && (
+            {payment.selectedCoupon && (
               <div className='p-4 bg-primary/10 rounded-lg border border-primary/20'>
                 <div className='flex items-center justify-between'>
                   <div>
-                    <p className='font-medium text-primary'>{selectedCouponData.name} 적용됨</p>
-                    <p className='text-sm text-primary/80'>₩{discountAmount.toLocaleString()} 할인</p>
+                    <p className='font-medium text-primary'>{payment.selectedCoupon.coupons?.name} 적용됨</p>
+                    <p className='text-sm text-primary/80'>₩{payment.discountAmount.toLocaleString()} 할인</p>
                   </div>
                   <Button
                     type='button'
@@ -246,26 +258,32 @@ export default function Payment() {
           <CardContent className='pt-6'>
             <div className='space-y-3'>
               <div className='flex justify-between items-center text-card-foreground'>
-                <span className='font-medium'>{selectedPlan?.name}</span>
-                <span className='font-medium'>₩{originalPrice.toLocaleString()}</span>
+                <span className='font-medium'>{payment.selectedPlan?.name}</span>
+                <span className='font-medium'>₩{payment.originalPrice.toLocaleString()}</span>
               </div>
-              {discount > 0 && (
+              {payment.selectedCoupon && (
                 <div className='flex justify-between items-center text-primary'>
-                  <span className='font-medium'>할인 ({discount}%)</span>
-                  <span className='font-medium'>-₩{discountAmount.toLocaleString()}</span>
+                  <span className='font-medium'>할인 ({payment.selectedCoupon.coupons?.discount || 0}%)</span>{' '}
+                  <span className='font-medium'>-₩{payment.discountAmount.toLocaleString()}</span>
                 </div>
               )}
               <div className='border-t border-border pt-3'>
                 <div className='flex justify-between items-center text-lg font-bold text-card-foreground'>
                   <span>총 결제 금액</span>
-                  <span className='text-xl'>₩{finalPrice.toLocaleString()}</span>
+                  <span className='text-xl'>₩{payment.finalPrice.toLocaleString()}</span>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Button type='submit' className='w-full' size='lg' onClick={() => goToStep('Summary')}>
+        <Button
+          type='submit'
+          className='w-full'
+          size='lg'
+          onClick={() => goToStep('Summary')}
+          disabled={!payment.selectedCardId}
+        >
           다음 단계
         </Button>
       </div>

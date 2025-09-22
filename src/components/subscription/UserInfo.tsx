@@ -5,23 +5,34 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
-import { userData } from '@/data/user-data';
 import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
+import { User } from '@/types';
+import { useUpdateUser } from '@/hooks/api/useUpdateUser';
 
-export default function UserInfo() {
+interface UserInfoProps {
+  user: User;
+}
+
+//TODO: ReactHookForm + Zod Schema validation + errorHandling
+export default function UserInfo({ user }: UserInfoProps) {
   const { goToStep } = useSubscriptionParams();
+  const updateUserMutation = useUpdateUser();
 
-  const originalUserInfo = {
-    name: userData?.name,
-    email: userData?.email,
-    phone: userData?.phone,
-  };
+  const [userInfo, setUserInfo] = useState({
+    name: user.name || '',
+    email: user.email || '',
+    phone: user.phone || '',
+  });
 
-  const [userInfo, setUserInfo] = useState(originalUserInfo);
-  const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState<Partial<typeof userInfo>>({});
 
-  const hasChanges = JSON.stringify(userInfo) !== JSON.stringify(originalUserInfo);
+  const hasChanges =
+    JSON.stringify(userInfo) !==
+    JSON.stringify({
+      name: user.name || '',
+      email: user.email || '',
+      phone: user.phone || '',
+    });
 
   const handleInputChange = (field: keyof typeof userInfo, value: string) => {
     setUserInfo((prev) => ({
@@ -30,10 +41,7 @@ export default function UserInfo() {
     }));
 
     if (errors[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: undefined,
-      }));
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
@@ -63,15 +71,13 @@ export default function UserInfo() {
       return;
     }
 
-    if (hasChanges) {
-      setIsSaving(true);
-      try {
-        goToStep('Payment');
-      } finally {
-        setIsSaving(false);
+    try {
+      if (hasChanges) {
+        await updateUserMutation.mutateAsync(userInfo);
       }
-    } else {
       goToStep('Payment');
+    } catch (error) {
+      console.error('사용자 정보 업데이트 실패:', error);
     }
   };
 
@@ -136,8 +142,8 @@ export default function UserInfo() {
             </div>
           )}
 
-          <Button onClick={handleNext} className='w-full' size='lg' disabled={isSaving}>
-            {isSaving ? '저장 중...' : hasChanges ? '저장 후 다음 단계' : '다음 단계'}
+          <Button onClick={handleNext} className='w-full' size='lg' disabled={updateUserMutation.isPending}>
+            {updateUserMutation.isPending ? '저장 중...' : hasChanges ? '저장 후 다음 단계' : '다음 단계'}
           </Button>
         </CardContent>
       </Card>
