@@ -68,7 +68,6 @@ export interface UserCoupon {
   coupons: {
     code: string;
     name: string;
-    discount_type: string;
-    discount_value: number;
+    discount: number;
   };
 }
