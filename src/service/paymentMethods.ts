@@ -1,8 +1,8 @@
 import { Card, CreateCardRequest } from '@/types';
 import { apiRequest } from './apiRequest';
 
-export const cardService = {
-  getCards: () => apiRequest<Card[]>('/cards'),
+export const paymentMethodsService = {
+  getCards: () => apiRequest<Card[]>('/payment-methods'),
 
   createCard: (cardData: CreateCardRequest) =>
     apiRequest<Card>('/cards', {
