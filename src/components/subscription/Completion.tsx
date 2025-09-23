@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { CheckCircle, ArrowRight } from 'lucide-react';
 import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 import { User } from '@/types';
-import { usePaymentCalculation } from '@/hooks/usePaymentCalculation';
+import { useCheckoutCalculation } from '@/hooks/useCheckoutCalculation';
 
 interface CompletionProps {
   user: User;
@@ -13,7 +13,7 @@ interface CompletionProps {
 
 export function Completion({ user }: CompletionProps) {
   const { goToStep } = useSubscriptionParams();
-  const payment = usePaymentCalculation();
+  const payment = useCheckoutCalculation();
 
   if (!payment.selectedPlan) {
     return (
