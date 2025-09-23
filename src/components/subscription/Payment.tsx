@@ -13,7 +13,7 @@ import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 import { usePaymentMethods } from '@/hooks/api/usePaymentMethods';
 import { useCoupons } from '@/hooks/api/useCoupons';
 import { useAddPaymentMethods } from '@/hooks/api/useAddPaymentMethods';
-import { usePaymentCalculation } from '@/hooks/usePaymentCalculation';
+import { useCheckoutCalculation } from '@/hooks/useCheckoutCalculation';
 
 export default function Payment() {
   const { goToStep, updateParam } = useSubscriptionParams();
@@ -22,7 +22,7 @@ export default function Payment() {
   const { data: coupons = [], isLoading: couponsLoading } = useCoupons();
   const addPaymentMethodMutation = useAddPaymentMethods();
 
-  const payment = usePaymentCalculation();
+  const payment = useCheckoutCalculation();
 
   const [isCardModalOpen, setIsCardModalOpen] = useState(false);
   const [newCard, setNewCard] = useState({

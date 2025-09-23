@@ -51,7 +51,7 @@ export interface UserSubscription {
   discounted_price: number;
 }
 
-export interface UserSubscriptionInfo {
+export interface CheckoutRequest {
   subscriptionId: string;
   cardId: string;
   couponId?: string;
@@ -59,7 +59,7 @@ export interface UserSubscriptionInfo {
   discountedPrice: number;
 }
 
-export interface UserCoupon {
+export interface UserCouponInfo {
   id: string;
   user_id: string;
   coupon_id: string;
