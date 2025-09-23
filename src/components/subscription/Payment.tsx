@@ -9,7 +9,7 @@ import { CreditCard, Tag, X } from 'lucide-react';
 import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 import { usePaymentMethods } from '@/hooks/api/usePaymentMethods';
 import { useCoupons } from '@/hooks/api/useCoupons';
-import { useCheckoutCalculation } from '@/hooks/useCheckoutCalculation';
+import { useValidatedCheckout } from '@/hooks/useCheckoutCalculation';
 import { AddCardModal } from './AddCardModal';
 
 export default function Payment() {
@@ -18,7 +18,7 @@ export default function Payment() {
   const { data: cards } = usePaymentMethods();
   const { data: coupons = [] } = useCoupons();
 
-  const payment = useCheckoutCalculation();
+  const payment = useValidatedCheckout();
 
   return (
     <div className='max-w-2xl mx-auto px-4'>

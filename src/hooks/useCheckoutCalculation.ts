@@ -44,3 +44,23 @@ export function useCheckoutCalculation() {
     };
   }, [planId, cardId, couponId, coupons]);
 }
+
+export function useValidatedCheckout() {
+  const checkout = useCheckoutCalculation();
+
+  return useMemo(() => {
+    if (!checkout.selectedPlan) {
+      throw new Error('플랜이 선택되지 않았습니다.');
+    }
+
+    if (!checkout.selectedCardId) {
+      throw new Error('결제 방법이 선택되지 않았습니다.');
+    }
+
+    return {
+      ...checkout,
+      selectedPlan: checkout.selectedPlan,
+      selectedCardId: checkout.selectedCardId,
+    };
+  }, [checkout]);
+}

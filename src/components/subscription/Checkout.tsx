@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/Badge';
 import { User, CreditCard, Tag, Package } from 'lucide-react';
 import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 import { User as UserType } from '@/types';
-import { useCheckoutCalculation } from '@/hooks/useCheckoutCalculation';
+import { useValidatedCheckout } from '@/hooks/useCheckoutCalculation';
 import { useCheckout } from '@/hooks/api/useCheckout';
 
 interface CheckoutProps {
@@ -15,18 +15,10 @@ interface CheckoutProps {
 
 export function Checkout({ user }: CheckoutProps) {
   const { goToStep } = useSubscriptionParams();
-  const payment = useCheckoutCalculation();
+  const payment = useValidatedCheckout();
   const checkoutMutation = useCheckout();
 
   const handleConfirm = async () => {
-    if (!payment.selectedPlan) {
-      throw new Error('플랜이 선택되지 않았습니다. 플랜을 선택해주세요.');
-    }
-
-    if (!payment.selectedCardId) {
-      throw new Error('결제 방법이 선택되지 않았습니다. 결제 정보를 입력해주세요.');
-    }
-
     await checkoutMutation.mutateAsync({
       subscriptionId: payment.selectedPlan.id,
       cardId: payment.selectedCardId,
