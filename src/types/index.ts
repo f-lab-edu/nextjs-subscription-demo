@@ -13,13 +13,13 @@ export interface UpdateUserRequest {
 
 export interface Card {
   id: string;
-  user_id: string;
+  userId: string;
   last4: string;
-  card_owner: string;
+  cardOwner: string;
   expiry: string;
   brand: string;
-  is_default: boolean;
-  pg_token: string;
+  isDefault: boolean;
+  pgToken: string;
 }
 
 export interface CreateCardRequest {
@@ -39,16 +39,18 @@ export interface Subscription {
 
 export interface UserSubscription {
   id: string;
-  user_id: string;
-  subscription_id: string;
-  card_id: string;
-  coupon_id?: string;
+  userId: string;
+  subscriptionId: string;
+  cardId: string;
+  couponId?: string;
   status: 'active' | 'cancelled' | 'paused' | 'expired';
-  start_date: string;
-  end_date?: string;
-  next_billing_date: string;
-  original_price: number;
-  discounted_price: number;
+  startDate: string;
+  endDate?: string;
+  nextBillingDate: string;
+  originalPrice: number;
+  discountedPrice: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CheckoutRequest {
@@ -59,12 +61,32 @@ export interface CheckoutRequest {
   discountedPrice: number;
 }
 
+export interface CreateSubscriptionRequest {
+  userId: string;
+  subscriptionId: string;
+  cardId: string;
+  couponId?: string;
+  originalPrice: number;
+  discountedPrice: number;
+  status: 'active' | 'cancelled' | 'paused' | 'expired';
+  startDate: string;
+  nextBillingDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CheckoutResponse {
+  success: boolean;
+  data?: UserSubscription;
+  error?: string;
+}
+
 export interface UserCouponInfo {
   id: string;
-  user_id: string;
-  coupon_id: string;
-  is_used: boolean;
-  used_at?: string;
+  userId: string;
+  couponId: string;
+  isUsed: boolean;
+  usedAt?: string;
   coupons: {
     code: string;
     name: string;
