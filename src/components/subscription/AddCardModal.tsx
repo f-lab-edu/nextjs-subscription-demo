@@ -34,22 +34,19 @@ export function AddCardModal({ onCardAdded }: AddCardModalProps) {
   });
 
   const onSubmit = async (data: AddCardFormData) => {
-    try {
-      const result = await addPaymentMethodMutation.mutateAsync({
-        cardNumber: data.cardNumber,
-        cardOwner: data.cardOwner,
-        expiry: data.expiry,
-        brand: 'New Card',
-        isDefault: false,
-      });
-      reset();
+    const result = await addPaymentMethodMutation.mutateAsync({
+      cardNumber: data.cardNumber,
+      cardOwner: data.cardOwner,
+      expiry: data.expiry,
+      brand: 'New Card',
+      isDefault: false,
+    });
 
-      if (result.data) {
-        updateParam('cardId', result.data.id);
-        onCardAdded?.();
-      }
-    } catch (error) {
-      console.error('카드 추가 실패:', error);
+    reset();
+
+    if (result.data) {
+      updateParam('cardId', result.data.id);
+      onCardAdded?.();
     }
   };
 
