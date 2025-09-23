@@ -1,14 +1,10 @@
-import { Plan, plans } from '@/data/card-data';
+import { plans } from '@/data/card-data';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { Button } from '../ui/Button';
 import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 
-interface PlanSelectionProps {
-  selectedPlan?: Plan;
-}
-
-export default function PlanSelection({ selectedPlan }: PlanSelectionProps) {
+export default function PlanSelection() {
   const { goToStep } = useSubscriptionParams();
 
   return (
@@ -23,9 +19,8 @@ export default function PlanSelection({ selectedPlan }: PlanSelectionProps) {
           <Card
             onClick={() => goToStep('UserInfo', { planId: plan.id })}
             key={plan.id}
-            className={`relative cursor-pointer transition-all duration-200 hover:scale-[1.02] flex flex-col h-full ${
-              selectedPlan?.id === plan.id ? 'ring-2 ring-primary bg-card shadow-lg' : 'hover:shadow-lg bg-card'
-            }`}
+            className={`relative cursor-pointer transition-all duration-200 hover:scale-[1.02] flex flex-col h-full hover:shadow-lg bg-card
+            `}
           >
             {plan.isPopular && (
               <Badge className='absolute -top-2 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground z-10'>
