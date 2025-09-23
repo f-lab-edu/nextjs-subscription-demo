@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/Badge';
 import { User, CreditCard, Tag, Package } from 'lucide-react';
 import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 import { User as UserType } from '@/types';
-import { usePaymentCalculation } from '@/hooks/usePaymentCalculation';
+import { useCheckoutCalculation } from '@/hooks/useCheckoutCalculation';
 import { useCheckout } from '@/hooks/api/useCheckout';
 
 interface CheckoutProps {
@@ -16,7 +16,7 @@ interface CheckoutProps {
 
 export function Checkout({ user }: CheckoutProps) {
   const { goToStep } = useSubscriptionParams();
-  const payment = usePaymentCalculation();
+  const payment = useCheckoutCalculation();
   const checkoutMutation = useCheckout();
 
   const [isProcessing, setIsProcessing] = useState(false);

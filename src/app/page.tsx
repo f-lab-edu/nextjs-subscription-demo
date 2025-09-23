@@ -4,7 +4,7 @@ import { Completion } from '@/components/subscription/Completion';
 import Payment from '@/components/subscription/Payment';
 import PlanSelection from '@/components/subscription/PlanSelection';
 import { ProgressIndicator } from '@/components/subscription/ProgressIndicator';
-import { Summary } from '@/components/subscription/Summary';
+import { Checkout } from '@/components/subscription/Checkout';
 import UserInfo from '@/components/subscription/UserInfo';
 import { useUser } from '@/hooks/api/useUser';
 import { useFunnel } from '@/hooks/useFunnel';
@@ -58,7 +58,7 @@ export default function Home() {
                 <Payment />
               </Funnel.Step>
               <Funnel.Step name='Summary'>
-                <Summary user={user} />
+                <Checkout user={user} />
               </Funnel.Step>
               <Funnel.Step name='Completion'>
                 <Completion user={user} />

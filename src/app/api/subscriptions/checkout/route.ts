@@ -1,4 +1,4 @@
-import { UserSubscriptionInfo } from '@/types';
+import { CheckoutRequest } from '@/types';
 import { getDevUserId } from '@/utils/dev-auth';
 import { createClient } from '@/utils/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
     const userId = getDevUserId();
-    const body: UserSubscriptionInfo = await request.json();
+    const body: CheckoutRequest = await request.json();
 
     const startDate = new Date().toISOString();
     const nextBillingDate = new Date();

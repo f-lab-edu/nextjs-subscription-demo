@@ -4,7 +4,7 @@ import { plans } from '@/data/card-data';
 import { usePaymentMethods } from './api/usePaymentMethods';
 import { useCoupons } from './api/useCoupons';
 
-export function usePaymentCalculation() {
+export function useCheckoutCalculation() {
   const { planId, cardId, couponId } = useSubscriptionParams();
   const { data: paymentMethods = [] } = usePaymentMethods();
   const { data: coupons = [] } = useCoupons();
