@@ -34,22 +34,12 @@ export default function UserInfo({ user }: UserInfoProps) {
   });
 
   const onSubmit = async (data: UserInfoFormData) => {
-    try {
-      const hasChanges =
-        JSON.stringify(data) !==
-        JSON.stringify({
-          name: user.name || '',
-          email: user.email || '',
-          phone: user.phone || '',
-        });
+    const hasChanges = isDirty;
 
-      if (hasChanges) {
-        await updateUserMutation.mutateAsync(data);
-      }
-      goToStep('Payment');
-    } catch (error) {
-      console.error('사용자 정보 업데이트 실패:', error);
+    if (hasChanges) {
+      await updateUserMutation.mutateAsync(data);
     }
+    goToStep('Payment');
   };
 
   return (
