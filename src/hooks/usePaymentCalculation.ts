@@ -5,14 +5,14 @@ import { usePaymentMethods } from './api/usePaymentMethods';
 import { useCoupons } from './api/useCoupons';
 
 export function usePaymentCalculation() {
-  const { planid, cardid, couponid } = useSubscriptionParams();
+  const { planId, cardId, couponId } = useSubscriptionParams();
   const { data: paymentMethods = [] } = usePaymentMethods();
   const { data: coupons = [] } = useCoupons();
 
   return useMemo(() => {
-    const selectedPlan = plans.find((plan) => plan.id === planid);
-    const selectedCardId = cardid || paymentMethods[0]?.id || '';
-    const selectedCoupon = coupons.find((c) => c.coupon_id === couponid);
+    const selectedPlan = plans.find((plan) => plan.id === planId);
+    const selectedCardId = cardId || paymentMethods[0]?.id || '';
+    const selectedCoupon = coupons.find((c) => c.coupon_id === couponId);
 
     const originalPrice = selectedPlan?.price || 0;
     const discountAmount = selectedCoupon?.coupons?.discount
@@ -28,5 +28,5 @@ export function usePaymentCalculation() {
       discountAmount,
       finalPrice,
     };
-  }, [planid, cardid, couponid, paymentMethods, coupons]);
+  }, [planId, cardId, couponId, paymentMethods, coupons]);
 }

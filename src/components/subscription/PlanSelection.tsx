@@ -21,7 +21,7 @@ export default function PlanSelection({ selectedPlan }: PlanSelectionProps) {
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6'>
         {plans.map((plan) => (
           <Card
-            onClick={() => goToStep('UserInfo', { planid: plan.id })}
+            onClick={() => goToStep('UserInfo', { planId: plan.id })}
             key={plan.id}
             className={`relative cursor-pointer transition-all duration-200 hover:scale-[1.02] flex flex-col h-full ${
               selectedPlan?.id === plan.id ? 'ring-2 ring-primary bg-card shadow-lg' : 'hover:shadow-lg bg-card'
