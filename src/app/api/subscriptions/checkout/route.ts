@@ -1,4 +1,4 @@
-import { CheckoutRequest } from '@/types';
+import { CheckoutRequest, UserSubscription } from '@/types';
 import { getDevUserId } from '@/utils/dev-auth';
 import { createClient } from '@/utils/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
@@ -31,7 +31,23 @@ export async function POST(request: NextRequest) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    return NextResponse.json({ data }, { status: 201 });
+
+    const responseData: UserSubscription = {
+      id: data.id,
+      userId: data.user_id,
+      subscriptionId: data.subscription_id,
+      cardId: data.card_id,
+      couponId: data.coupon_id,
+      status: data.status,
+      startDate: data.start_date,
+      nextBillingDate: data.next_billing_date,
+      originalPrice: data.original_price,
+      discountedPrice: data.discounted_price,
+      createdAt: data.created_at,
+      updatedAt: data.updated_at,
+    };
+
+    return NextResponse.json({ data: responseData }, { status: 201 });
   } catch {
     return NextResponse.json({ error: '서버 오류가 발생했습니다.' }, { status: 500 });
   }
