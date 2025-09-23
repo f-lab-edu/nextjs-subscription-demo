@@ -15,22 +15,10 @@ import { AddCardModal } from './AddCardModal';
 export default function Payment() {
   const { goToStep, updateParam } = useSubscriptionParams();
 
-  const { data: cards, isLoading: cardsLoading } = usePaymentMethods();
-  const { data: coupons = [], isLoading: couponsLoading } = useCoupons();
+  const { data: cards } = usePaymentMethods();
+  const { data: coupons = [] } = useCoupons();
 
   const payment = useCheckoutCalculation();
-
-  if (cardsLoading || couponsLoading) {
-    return (
-      <div className='max-w-2xl mx-auto px-4 text-center'>
-        <div className='text-lg font-medium'>결제 정보를 불러오는 중...</div>
-      </div>
-    );
-  }
-
-  if (cards === undefined) {
-    return <div>카드가 없습니다</div>;
-  }
 
   return (
     <div className='max-w-2xl mx-auto px-4'>
