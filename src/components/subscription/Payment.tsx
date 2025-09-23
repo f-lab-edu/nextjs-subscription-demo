@@ -1,36 +1,24 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/RadioGroup';
 import { Badge } from '@/components/ui/Badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/Dialog';
-import { CreditCard, Plus, Tag, X } from 'lucide-react';
+import { CreditCard, Tag, X } from 'lucide-react';
 import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 import { usePaymentMethods } from '@/hooks/api/usePaymentMethods';
 import { useCoupons } from '@/hooks/api/useCoupons';
-import { useAddPaymentMethods } from '@/hooks/api/useAddPaymentMethods';
 import { useCheckoutCalculation } from '@/hooks/useCheckoutCalculation';
+import { AddCardModal } from './AddCardModal';
 
 export default function Payment() {
   const { goToStep, updateParam } = useSubscriptionParams();
 
   const { data: cards, isLoading: cardsLoading } = usePaymentMethods();
   const { data: coupons = [], isLoading: couponsLoading } = useCoupons();
-  const addPaymentMethodMutation = useAddPaymentMethods();
 
   const payment = useCheckoutCalculation();
-
-  const [isCardModalOpen, setIsCardModalOpen] = useState(false);
-  const [newCard, setNewCard] = useState({
-    number: '',
-    expiry: '',
-    cvv: '',
-    name: '',
-  });
 
   if (cardsLoading || couponsLoading) {
     return (
@@ -43,27 +31,6 @@ export default function Payment() {
   if (cards === undefined) {
     return <div>카드가 없습니다</div>;
   }
-
-  const handleAddNewCard = async () => {
-    try {
-      const result = await addPaymentMethodMutation.mutateAsync({
-        cardNumber: newCard.number,
-        cardOwner: newCard.name,
-        expiry: newCard.expiry,
-        brand: 'New Card',
-        isDefault: false,
-      });
-
-      setNewCard({ number: '', expiry: '', cvv: '', name: '' });
-      setIsCardModalOpen(false);
-
-      if (result.data) {
-        updateParam('cardId', result.data.id);
-      }
-    } catch (error) {
-      console.error('카드 추가 실패:', error);
-    }
-  };
 
   return (
     <div className='max-w-2xl mx-auto px-4'>
@@ -107,83 +74,7 @@ export default function Payment() {
               ))}
             </RadioGroup>
 
-            {/* 새 카드 등록 다이얼로그 */}
-            <Dialog open={isCardModalOpen} onOpenChange={setIsCardModalOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  type='button'
-                  variant='outline'
-                  className='w-full border-dashed border-2 hover:border-primary bg-transparent'
-                >
-                  <Plus className='w-4 h-4 mr-2' />새 카드 등록
-                </Button>
-              </DialogTrigger>
-              <DialogContent className='sm:max-w-md'>
-                <DialogHeader>
-                  <DialogTitle className='flex items-center gap-2'>
-                    <CreditCard className='w-5 h-5' />새 카드 등록
-                  </DialogTitle>
-                </DialogHeader>
-                <div className='space-y-4'>
-                  <div className='space-y-2'>
-                    <Label htmlFor='cardNumber'>카드 번호</Label>
-                    <Input
-                      id='cardNumber'
-                      placeholder='1234 5678 9012 3456'
-                      value={newCard.number}
-                      onChange={(e) => setNewCard((prev) => ({ ...prev, number: e.target.value }))}
-                    />
-                  </div>
-                  <div className='space-y-2'>
-                    <Label htmlFor='cardName'>카드 소유자명</Label>
-                    <Input
-                      id='cardName'
-                      placeholder='홍길동'
-                      value={newCard.name}
-                      onChange={(e) => setNewCard((prev) => ({ ...prev, name: e.target.value }))}
-                    />
-                  </div>
-                  <div className='grid grid-cols-2 gap-4'>
-                    <div className='space-y-2'>
-                      <Label htmlFor='expiry'>만료일</Label>
-                      <Input
-                        id='expiry'
-                        placeholder='MM/YY'
-                        value={newCard.expiry}
-                        onChange={(e) => setNewCard((prev) => ({ ...prev, expiry: e.target.value }))}
-                      />
-                    </div>
-                    <div className='space-y-2'>
-                      <Label htmlFor='cvv'>CVV</Label>
-                      <Input
-                        id='cvv'
-                        placeholder='123'
-                        value={newCard.cvv}
-                        onChange={(e) => setNewCard((prev) => ({ ...prev, cvv: e.target.value }))}
-                      />
-                    </div>
-                  </div>
-                  <div className='flex gap-2 pt-4'>
-                    <Button
-                      type='button'
-                      variant='outline'
-                      onClick={() => setIsCardModalOpen(false)}
-                      className='flex-1'
-                    >
-                      취소
-                    </Button>
-                    <Button
-                      type='button'
-                      onClick={handleAddNewCard}
-                      className='flex-1'
-                      disabled={addPaymentMethodMutation.isPending}
-                    >
-                      {addPaymentMethodMutation.isPending ? '등록 중...' : '등록'}
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+            <AddCardModal />
           </CardContent>
         </Card>
 
