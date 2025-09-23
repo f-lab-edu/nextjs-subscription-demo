@@ -14,17 +14,17 @@ export function useSubscriptionParams() {
       defaultValue: 'PlanSelection' as SubscriptionStep,
     },
     {
-      key: 'planid',
+      key: 'planId',
       parser: parseString,
       defaultValue: '',
     },
     {
-      key: 'cardid',
+      key: 'cardId',
       parser: parseString,
       defaultValue: '',
     },
     {
-      key: 'couponid',
+      key: 'couponId',
       parser: parseString,
       defaultValue: '',
     },

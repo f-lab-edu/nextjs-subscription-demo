@@ -58,7 +58,7 @@ export default function Payment() {
       setIsCardModalOpen(false);
 
       if (result.data) {
-        updateParam('cardid', result.data.id);
+        updateParam('cardId', result.data.id);
       }
     } catch (error) {
       console.error('카드 추가 실패:', error);
@@ -82,7 +82,7 @@ export default function Payment() {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-4'>
-            <RadioGroup value={payment.selectedCardId} onValueChange={(value) => updateParam('cardid', value)}>
+            <RadioGroup value={payment.selectedCardId} onValueChange={(value) => updateParam('cardId', value)}>
               {cards.map((card) => (
                 <div
                   key={card.id}
@@ -198,7 +198,7 @@ export default function Payment() {
           <CardContent className='space-y-4'>
             <RadioGroup
               value={payment.selectedCoupon?.coupon_id || ''}
-              onValueChange={(value) => updateParam('couponid', value)}
+              onValueChange={(value) => updateParam('couponId', value)}
             >
               <div className='flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors'>
                 <RadioGroupItem value='' id='no-coupon' />
@@ -242,7 +242,7 @@ export default function Payment() {
                     type='button'
                     variant='ghost'
                     size='sm'
-                    onClick={() => updateParam('couponid', '')}
+                    onClick={() => updateParam('couponId', '')}
                     className='text-primary hover:text-primary/80'
                   >
                     <X className='w-4 h-4' />
