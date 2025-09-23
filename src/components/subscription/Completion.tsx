@@ -3,7 +3,6 @@
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { CheckCircle, ArrowRight } from 'lucide-react';
-import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 import { User } from '@/types';
 import { useCheckoutCalculation } from '@/hooks/useCheckoutCalculation';
 
@@ -12,17 +11,10 @@ interface CompletionProps {
 }
 
 export function Completion({ user }: CompletionProps) {
-  const { goToStep } = useSubscriptionParams();
   const payment = useCheckoutCalculation();
 
   if (!payment.selectedPlan) {
-    return (
-      <div className='max-w-2xl mx-auto px-4 text-center'>
-        <h2 className='text-2xl font-bold text-foreground mb-4'>오류가 발생했습니다</h2>
-        <p className='text-muted-foreground mb-6'>플랜 정보를 찾을 수 없습니다.</p>
-        <Button onClick={() => goToStep('PlanSelection')}>플랜 선택하러 가기</Button>
-      </div>
-    );
+    throw new Error('구독 정보를 찾을 수 없습니다. 구독 과정을 다시 시작해주세요.');
   }
 
   return (
