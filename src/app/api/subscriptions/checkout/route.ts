@@ -1,4 +1,4 @@
-import { CheckoutRequest, UserSubscription } from '@/types';
+import { CheckoutRequest, UserSubscriptionInfo } from '@/types';
 import { getDevUserId } from '@/utils/dev-auth';
 import { createClient } from '@/utils/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    const responseData: UserSubscription = {
+    const responseData: UserSubscriptionInfo = {
       id: data.id,
       userId: data.user_id,
       subscriptionId: data.subscription_id,

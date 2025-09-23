@@ -19,7 +19,6 @@ export interface Card {
   expiry: string;
   brand: string;
   isDefault: boolean;
-  pgToken: string;
 }
 
 export interface CreateCardRequest {
@@ -37,7 +36,7 @@ export interface Subscription {
   price: number;
 }
 
-export interface UserSubscription {
+export interface UserSubscriptionInfo {
   id: string;
   userId: string;
   subscriptionId: string;
@@ -73,12 +72,6 @@ export interface CreateSubscriptionRequest {
   nextBillingDate: string;
   createdAt: string;
   updatedAt: string;
-}
-
-export interface CheckoutResponse {
-  success: boolean;
-  data?: UserSubscription;
-  error?: string;
 }
 
 export interface UserCouponInfo {
