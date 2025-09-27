@@ -51,7 +51,7 @@ export default function Payment() {
                   key={card.id}
                   className='flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors'
                 >
-                  <RadioGroupItem value={card.id} id={card.id} onChange={() => updateParam('cardId', card.id)} />
+                  <RadioGroupItem value={card.id} id={card.id} />
                   <Label
                     htmlFor={card.id}
                     className='flex items-center gap-3 cursor-pointer text-card-foreground flex-grow'
