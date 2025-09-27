@@ -14,7 +14,7 @@ interface CheckoutProps {
 }
 
 export function Checkout({ user }: CheckoutProps) {
-  const { goToStep, cardId } = useSubscriptionParams();
+  const { goToStep, cardId, couponId } = useSubscriptionParams();
   const payment = useValidatedCheckout();
   const checkoutMutation = useCheckout();
 
@@ -22,7 +22,7 @@ export function Checkout({ user }: CheckoutProps) {
     await checkoutMutation.mutateAsync({
       subscriptionId: payment.selectedPlan.id,
       cardId: cardId,
-      couponId: payment.selectedCoupon?.coupon_id,
+      couponId: couponId,
       originalPrice: payment.originalPrice,
       discountedPrice: payment.finalPrice,
     });
