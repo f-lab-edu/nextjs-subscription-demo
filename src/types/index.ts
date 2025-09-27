@@ -80,9 +80,12 @@ export interface UserCouponInfo {
   couponId: string;
   isUsed: boolean;
   usedAt?: string;
-  coupons: {
-    code: string;
-    name: string;
-    discount: number;
-  };
+  coupons: Coupon;
+}
+
+export interface Coupon {
+  id: string;
+  name: string;
+  discount: number;
+  is_active: boolean;
 }

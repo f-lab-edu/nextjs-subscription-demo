@@ -1,6 +1,6 @@
-import { UserCoupon } from '@/types';
+import { UserCouponInfo } from '@/types';
 import { apiRequest } from './apiRequest';
 
 export const couponService = {
-  getUserCoupons: () => apiRequest<UserCoupon[]>('/coupons'),
+  getUserCoupons: () => apiRequest<UserCouponInfo[]>('/coupons'),
 };
