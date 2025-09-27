@@ -11,12 +11,18 @@ import { usePaymentMethods } from '@/hooks/api/usePaymentMethods';
 import { useCoupons } from '@/hooks/api/useCoupons';
 import { useValidatedCheckout } from '@/hooks/useCheckoutCalculation';
 import { AddCardModal } from './AddCardModal';
+import { useValidatedCardSelection } from '@/hooks/useValidatedCardSelection';
 
 export default function Payment() {
-  const { goToStep, updateParam } = useSubscriptionParams();
-
+  const { goToStep, updateParam, cardId } = useSubscriptionParams();
   const { data: cards } = usePaymentMethods();
   const { data: coupons = [] } = useCoupons();
+
+  const selectedCard = useValidatedCardSelection({
+    cardId,
+    cards,
+    updateParam,
+  });
 
   const payment = useValidatedCheckout();
 
@@ -37,13 +43,13 @@ export default function Payment() {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-4'>
-            <RadioGroup value={payment.selectedCardId} onValueChange={(value) => updateParam('cardId', value)}>
+            <RadioGroup value={selectedCard} onValueChange={(value) => updateParam('cardId', value)}>
               {cards.map((card) => (
                 <div
                   key={card.id}
                   className='flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors'
                 >
-                  <RadioGroupItem value={card.id} id={card.id} />
+                  <RadioGroupItem value={card.id} id={card.id} onChange={() => updateParam('cardId', card.id)} />
                   <Label
                     htmlFor={card.id}
                     className='flex items-center gap-3 cursor-pointer text-card-foreground flex-grow'
@@ -156,13 +162,7 @@ export default function Payment() {
           </CardContent>
         </Card>
 
-        <Button
-          type='submit'
-          className='w-full'
-          size='lg'
-          onClick={() => goToStep('Summary')}
-          disabled={!payment.selectedCardId}
-        >
+        <Button type='submit' className='w-full' size='lg' onClick={() => goToStep('Summary')} disabled={!selectedCard}>
           다음 단계
         </Button>
       </div>
