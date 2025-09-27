@@ -12,17 +12,19 @@ import { useCoupons } from '@/hooks/api/useCoupons';
 import { useValidatedCheckout } from '@/hooks/useCheckoutCalculation';
 import { AddCardModal } from './AddCardModal';
 import { useValidatedCardSelection } from '@/hooks/useValidatedCardSelection';
+import { useSelectedCoupon } from '@/hooks/useSelectedCoupon';
 
 export default function Payment() {
-  const { goToStep, updateParam, cardId } = useSubscriptionParams();
+  const { goToStep, updateParam, cardId, couponId } = useSubscriptionParams();
   const { data: cards } = usePaymentMethods();
-  const { data: coupons = [] } = useCoupons();
+  const { data: userCoupons = [] } = useCoupons();
 
   const selectedCard = useValidatedCardSelection({
     cardId,
     cards,
     updateParam,
   });
+  const selectedCoupon = useSelectedCoupon({ couponId, userCoupons });
 
   const payment = useValidatedCheckout();
 
@@ -82,7 +84,7 @@ export default function Payment() {
           </CardHeader>
           <CardContent className='space-y-4'>
             <RadioGroup
-              value={payment.selectedCoupon?.coupon_id || ''}
+              value={selectedCoupon?.couponId || ''}
               onValueChange={(value) => updateParam('couponId', value)}
             >
               <div className='flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors'>
@@ -91,23 +93,26 @@ export default function Payment() {
                   쿠폰 사용 안함
                 </Label>
               </div>
-              {coupons.map((coupon) => (
+              {userCoupons?.map((userCoupon) => (
                 <div
-                  key={coupon.id}
+                  key={userCoupon.id}
                   className='flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors'
                 >
-                  <RadioGroupItem value={coupon.coupon_id} id={coupon.coupon_id} />
+                  <RadioGroupItem value={userCoupon.couponId} id={userCoupon.couponId} />
                   <Label
-                    htmlFor={coupon.coupon_id}
+                    htmlFor={userCoupon.couponId}
                     className='flex items-center gap-3 cursor-pointer text-card-foreground flex-grow'
                   >
                     <Badge variant='secondary' className='bg-primary/10 text-primary border-primary/20'>
-                      {coupon.coupons?.discount || 0}% 할인
+                      {userCoupon.coupons?.discount || 0}% 할인
                     </Badge>
                     <div>
-                      <div className='font-medium'>{coupon.coupons?.name}</div>
+                      <div className='font-medium'>{userCoupon.coupons?.name}</div>
                       <div className='text-sm text-muted-foreground'>
-                        ₩{Math.floor((payment.originalPrice * (coupon.coupons?.discount || 0)) / 100).toLocaleString()}
+                        ₩
+                        {Math.floor(
+                          (payment.originalPrice * (userCoupon.coupons?.discount || 0)) / 100,
+                        ).toLocaleString()}
                         절약
                       </div>
                     </div>
@@ -116,11 +121,11 @@ export default function Payment() {
               ))}
             </RadioGroup>
             {/* 선택된 쿠폰 표시 */}
-            {payment.selectedCoupon && (
+            {selectedCoupon && (
               <div className='p-4 bg-primary/10 rounded-lg border border-primary/20'>
                 <div className='flex items-center justify-between'>
                   <div>
-                    <p className='font-medium text-primary'>{payment.selectedCoupon.coupons?.name} 적용됨</p>
+                    <p className='font-medium text-primary'>{selectedCoupon.coupons.name} 적용됨</p>
                     <p className='text-sm text-primary/80'>₩{payment.discountAmount.toLocaleString()} 할인</p>
                   </div>
                   <Button
@@ -148,7 +153,7 @@ export default function Payment() {
               </div>
               {payment.selectedCoupon && (
                 <div className='flex justify-between items-center text-primary'>
-                  <span className='font-medium'>할인 ({payment.selectedCoupon.coupons?.discount || 0}%)</span>{' '}
+                  <span className='font-medium'>할인 ({selectedCoupon?.coupons.discount || 0}%)</span>{' '}
                   <span className='font-medium'>-₩{payment.discountAmount.toLocaleString()}</span>
                 </div>
               )}
