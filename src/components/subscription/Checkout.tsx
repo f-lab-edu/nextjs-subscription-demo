@@ -14,14 +14,14 @@ interface CheckoutProps {
 }
 
 export function Checkout({ user }: CheckoutProps) {
-  const { goToStep } = useSubscriptionParams();
+  const { goToStep, cardId } = useSubscriptionParams();
   const payment = useValidatedCheckout();
   const checkoutMutation = useCheckout();
 
   const handleConfirm = async () => {
     await checkoutMutation.mutateAsync({
       subscriptionId: payment.selectedPlan.id,
-      cardId: payment.selectedCardId,
+      cardId: cardId,
       couponId: payment.selectedCoupon?.coupon_id,
       originalPrice: payment.originalPrice,
       discountedPrice: payment.finalPrice,
