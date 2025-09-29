@@ -1,12 +1,10 @@
-import { ReactNode, useRef, useState } from 'react';
+import { ComponentProps, ReactNode, useRef, useState } from 'react';
 import { Button } from './ui/Button';
 
-interface SubmitButtonProps {
+interface SubmitButtonProps extends Omit<ComponentProps<typeof Button>, 'onClick'> {
   children: ReactNode;
   loadingText?: ReactNode;
   onClick: () => Promise<void>;
-  disabled?: boolean;
-  className?: string;
   type?: 'button' | 'submit';
 }
 
