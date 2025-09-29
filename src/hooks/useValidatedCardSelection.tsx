@@ -1,13 +1,11 @@
-import { Card } from '@/types';
 import { useEffect, useMemo } from 'react';
+import { usePaymentMethods } from './api/usePaymentMethods';
+import { useSubscriptionParams } from './useSubscriptionParams';
 
-interface UseValidatedCardSelectionProps {
-  cardId: string | null;
-  cards: Card[];
-  updateParam: (key: 'cardId', value: string) => void;
-}
+export function useValidatedCardSelection() {
+  const { cardId, updateParam } = useSubscriptionParams();
+  const { data: cards } = usePaymentMethods();
 
-export function useValidatedCardSelection({ cardId, cards, updateParam }: UseValidatedCardSelectionProps) {
   const selectedCard = useMemo(() => {
     if (cards.length === 0) {
       return null;

@@ -15,16 +15,12 @@ import { useValidatedCardSelection } from '@/hooks/useValidatedCardSelection';
 import { useSelectedCoupon } from '@/hooks/useSelectedCoupon';
 
 export default function Payment() {
-  const { goToStep, updateParam, cardId, couponId } = useSubscriptionParams();
+  const { goToStep, updateParam } = useSubscriptionParams();
   const { data: cards } = usePaymentMethods();
   const { data: userCoupons = [] } = useCoupons();
 
-  const selectedCard = useValidatedCardSelection({
-    cardId,
-    cards,
-    updateParam,
-  });
-  const selectedCoupon = useSelectedCoupon({ couponId, userCoupons });
+  const selectedCard = useValidatedCardSelection();
+  const selectedCoupon = useSelectedCoupon();
 
   const payment = useValidatedCheckout();
 
