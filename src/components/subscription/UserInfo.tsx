@@ -1,7 +1,6 @@
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
@@ -10,6 +9,7 @@ import { useUpdateUser } from '@/hooks/api/useUpdateUser';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { UserInfoFormData, userInfoSchema } from '@/schemas/userInfoSchema';
+import SubmitButton from '../SubmitButton';
 
 interface UserInfoProps {
   user: User;
@@ -49,7 +49,7 @@ export default function UserInfo({ user }: UserInfoProps) {
         <p className='text-muted-foreground'>정보를 확인하고 필요시 수정해주세요.</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={(e) => e.preventDefault()}>
         <Card>
           <CardHeader>
             <CardTitle>개인 정보</CardTitle>
@@ -107,9 +107,15 @@ export default function UserInfo({ user }: UserInfoProps) {
               </div>
             )}
 
-            <Button type='submit' className='w-full' size='lg' disabled={updateUserMutation.isPending}>
-              {updateUserMutation.isPending ? '저장 중...' : isDirty ? '저장 후 다음 단계' : '다음 단계'}
-            </Button>
+            <SubmitButton
+              type='submit'
+              className='w-full'
+              size='lg'
+              onClick={handleSubmit(onSubmit)}
+              loadingText='저장 중...'
+            >
+              다음 단계
+            </SubmitButton>
           </CardContent>
         </Card>
       </form>
