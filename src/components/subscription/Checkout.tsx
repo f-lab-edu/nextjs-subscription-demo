@@ -22,7 +22,7 @@ export function Checkout({ user }: CheckoutProps) {
     await checkoutMutation.mutateAsync({
       subscriptionId: payment.selectedPlan.id,
       cardId: cardId,
-      couponId: couponId,
+      couponId: couponId || undefined,
       originalPrice: payment.originalPrice,
       discountedPrice: payment.finalPrice,
     });

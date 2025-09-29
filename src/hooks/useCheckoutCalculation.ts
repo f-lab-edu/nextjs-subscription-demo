@@ -1,20 +1,36 @@
 import { useMemo } from 'react';
 import { useSubscriptionParams } from './useSubscriptionParams';
 import { plans } from '@/data/card-data';
-import { useCoupons } from './api/useCoupons';
+import { useSelectedCoupon } from './useSelectedCoupon';
 
-export function useCheckoutCalculation() {
-  const { planId, couponId } = useSubscriptionParams();
-  const { data: coupons = [] } = useCoupons();
+type CheckoutCalculation = {
+  selectedPlan: (typeof plans)[number] | undefined;
+  selectedCoupon: ReturnType<typeof useSelectedCoupon>;
+  originalPrice: number;
+  discountAmount: number;
+  finalPrice: number;
+};
+
+export function useCheckoutCalculation(): CheckoutCalculation {
+  const { planId } = useSubscriptionParams();
+  const selectedCoupon = useSelectedCoupon();
 
   return useMemo(() => {
     const selectedPlan = plans.find((plan) => plan.id === planId);
-    const selectedCoupon = coupons.find((c) => c.coupon_id === couponId);
 
-    const originalPrice = selectedPlan?.price || 0;
-    const discountAmount = selectedCoupon?.coupons?.discount
-      ? Math.floor((originalPrice * selectedCoupon.coupons.discount) / 100)
-      : 0;
+    if (!selectedPlan) {
+      return {
+        selectedPlan: undefined,
+        selectedCoupon,
+        originalPrice: 0,
+        discountAmount: 0,
+        finalPrice: 0,
+      };
+    }
+
+    const originalPrice = selectedPlan.price;
+    const discountRate = selectedCoupon?.coupons.discount ?? 0;
+    const discountAmount = Math.floor((originalPrice * discountRate) / 100);
     const finalPrice = originalPrice - discountAmount;
 
     return {
@@ -24,20 +40,19 @@ export function useCheckoutCalculation() {
       discountAmount,
       finalPrice,
     };
-  }, [planId, couponId, coupons]);
+  }, [planId, selectedCoupon]);
 }
 
-export function useValidatedCheckout() {
+type ValidatedCheckout = Omit<CheckoutCalculation, 'selectedPlan'> & {
+  selectedPlan: NonNullable<CheckoutCalculation['selectedPlan']>;
+};
+
+export function useValidatedCheckout(): ValidatedCheckout {
   const checkout = useCheckoutCalculation();
 
-  return useMemo(() => {
-    if (!checkout.selectedPlan) {
-      throw new Error('플랜이 선택되지 않았습니다.');
-    }
+  if (!checkout.selectedPlan) {
+    throw new Error('플랜이 선택되지 않았습니다.');
+  }
 
-    return {
-      ...checkout,
-      selectedPlan: checkout.selectedPlan,
-    };
-  }, [checkout]);
+  return checkout as ValidatedCheckout;
 }

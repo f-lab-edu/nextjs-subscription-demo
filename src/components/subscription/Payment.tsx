@@ -12,7 +12,6 @@ import { useCoupons } from '@/hooks/api/useCoupons';
 import { useValidatedCheckout } from '@/hooks/useCheckoutCalculation';
 import { AddCardModal } from './AddCardModal';
 import { useValidatedCardSelection } from '@/hooks/useValidatedCardSelection';
-import { useSelectedCoupon } from '@/hooks/useSelectedCoupon';
 
 export default function Payment() {
   const { goToStep, updateParam } = useSubscriptionParams();
@@ -20,7 +19,6 @@ export default function Payment() {
   const { data: userCoupons = [] } = useCoupons();
 
   const selectedCard = useValidatedCardSelection();
-  const selectedCoupon = useSelectedCoupon();
 
   const payment = useValidatedCheckout();
 
@@ -80,7 +78,7 @@ export default function Payment() {
           </CardHeader>
           <CardContent className='space-y-4'>
             <RadioGroup
-              value={selectedCoupon?.couponId || ''}
+              value={payment.selectedCoupon?.couponId || ''}
               onValueChange={(value) => updateParam('couponId', value)}
             >
               <div className='flex items-center space-x-3 p-3 rounded-lg border border-border hover:bg-muted/50 transition-colors'>
@@ -117,11 +115,11 @@ export default function Payment() {
               ))}
             </RadioGroup>
             {/* 선택된 쿠폰 표시 */}
-            {selectedCoupon && (
+            {payment.selectedCoupon && (
               <div className='p-4 bg-primary/10 rounded-lg border border-primary/20'>
                 <div className='flex items-center justify-between'>
                   <div>
-                    <p className='font-medium text-primary'>{selectedCoupon.coupons.name} 적용됨</p>
+                    <p className='font-medium text-primary'>{payment.selectedCoupon.coupons.name} 적용됨</p>
                     <p className='text-sm text-primary/80'>₩{payment.discountAmount.toLocaleString()} 할인</p>
                   </div>
                   <Button
@@ -149,7 +147,7 @@ export default function Payment() {
               </div>
               {payment.selectedCoupon && (
                 <div className='flex justify-between items-center text-primary'>
-                  <span className='font-medium'>할인 ({selectedCoupon?.coupons.discount || 0}%)</span>{' '}
+                  <span className='font-medium'>할인 ({payment.selectedCoupon?.coupons.discount || 0}%)</span>{' '}
                   <span className='font-medium'>-₩{payment.discountAmount.toLocaleString()}</span>
                 </div>
               )}
