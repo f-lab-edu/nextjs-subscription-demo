@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
 import { UserCouponInfo } from '@/types';
+import { useCoupons } from './api/useCoupons';
+import { useSubscriptionParams } from './useSubscriptionParams';
 
-interface UseSelectedCouponProps {
-  couponId: string | null;
-  userCoupons: UserCouponInfo[];
-}
+export function useSelectedCoupon(): UserCouponInfo | null {
+  const { couponId } = useSubscriptionParams();
+  const { data: userCoupons = [] } = useCoupons();
 
-export function useSelectedCoupon({ couponId, userCoupons }: UseSelectedCouponProps): UserCouponInfo | null {
   return useMemo(() => {
     if (couponId == null) return null;
     return userCoupons.find((c) => c.couponId === couponId) || null;
