@@ -103,10 +103,7 @@ export default function Payment() {
                     <div>
                       <div className='font-medium'>{userCoupon.coupons?.name}</div>
                       <div className='text-sm text-muted-foreground'>
-                        ₩
-                        {Math.floor(
-                          (payment.originalPrice * (userCoupon.coupons?.discount || 0)) / 100,
-                        ).toLocaleString()}
+                        ₩{payment.discountAmount.toLocaleString()}
                         절약
                       </div>
                     </div>
