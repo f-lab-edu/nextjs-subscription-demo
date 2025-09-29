@@ -8,6 +8,7 @@ import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AddCardFormData, addCardSchema } from '@/schemas/addCardSchema';
+import SubmitButton from '../SubmitButton';
 
 interface AddCardModalProps {
   onCardAdded?: () => void;
@@ -67,7 +68,7 @@ export function AddCardModal({ onCardAdded }: AddCardModalProps) {
             <CreditCard className='w-5 h-5' />새 카드 등록
           </DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={(e) => e.preventDefault()}>
           <div className='space-y-4'>
             <div className='space-y-2'>
               <Label htmlFor='cardNumber'>카드 번호</Label>
@@ -123,9 +124,10 @@ export function AddCardModal({ onCardAdded }: AddCardModalProps) {
               <Button type='button' variant='outline' className='flex-1'>
                 취소
               </Button>
-              <Button type='submit' className='flex-1' disabled={addPaymentMethodMutation.isPending}>
-                {addPaymentMethodMutation.isPending ? '등록 중...' : '등록'}
-              </Button>
+
+              <SubmitButton className='flex-1' onClick={handleSubmit(onSubmit)} loadingText='등록 중...'>
+                등록
+              </SubmitButton>
             </div>
           </div>
         </form>
