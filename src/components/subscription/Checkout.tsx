@@ -8,6 +8,7 @@ import { useSubscriptionParams } from '@/hooks/useSubscriptionParams';
 import { User as UserType } from '@/types';
 import { useValidatedCheckout } from '@/hooks/useCheckoutCalculation';
 import { useCheckout } from '@/hooks/api/useCheckout';
+import SubmitButton from '../SubmitButton';
 
 interface CheckoutProps {
   user: UserType;
@@ -173,9 +174,18 @@ export function Checkout({ user }: CheckoutProps) {
           >
             이전 단계
           </Button>
-          <Button onClick={handleConfirm} className='flex-1' size='lg' disabled={checkoutMutation.isPending}>
+          {/* <Button onClick={handleConfirm} className='flex-1' size='lg' disabled={checkoutMutation.isPending}>
             {checkoutMutation.isPending ? '결제 처리 중...' : '구독 확인 및 결제'}
-          </Button>
+          </Button> */}
+          <SubmitButton
+            type='button'
+            onClick={handleConfirm}
+            className='flex-1'
+            loadingText='결제 처리 중...'
+            size='lg'
+          >
+            구독 확인 및 결제
+          </SubmitButton>
         </div>
       </div>
     </div>
